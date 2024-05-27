@@ -1,6 +1,6 @@
 /*
-	Frequency Volume Reduction v1.0 by AAD
-	https://github.com/AmateurAudioDude
+	Frequency Volume Reduction v1.01 by AAD
+	https://github.com/AmateurAudioDude/FM-DX-Webserver-Plugin-Frequency-Volume-Reduction
 */
 
 // Frequency data
@@ -51,11 +51,14 @@ function displayMessage() {
         e.innerHTML += tempMessage;
         messageDisplayed = true;
         // Remove the last <br> from the element with the ID tuner-desc
-        const tunerDesc = document.getElementById('tuner-name');
-        const lastBrElement = tunerDesc.querySelector('br:last-child');
+        tunerDesc = document.getElementById('tuner-name');
+        lastBrElement = tunerDesc.querySelector('br:last-child');
         if (lastBrElement) {
             lastBrElement.remove();
         }
+        // Add tooltip
+        tunerDesc.classList.add("tooltip");
+        tunerDesc.setAttribute("title", "Volume attenuated for this frequency.");
     }
 
     // If there's a running timer, clear it and restart
@@ -67,6 +70,9 @@ function displayMessage() {
     timer = setTimeout(() => {
         e.innerHTML = e.innerHTML.replace(tempMessage, '');
         messageDisplayed = false;
+        // Remove tooltip
+        tunerDesc.classList.remove("tooltip");
+        tunerDesc.removeAttribute("title");
     }, 300000);
 }
 
@@ -78,6 +84,9 @@ function restoreVolume() {
         timer = setTimeout(() => {
             e.innerHTML = e.innerHTML.replace(tempMessage, '');
             messageDisplayed = false;
+            // Remove tooltip
+            tunerDesc.classList.remove("tooltip");
+            tunerDesc.removeAttribute("title");
         }, 500);
     }
 }
