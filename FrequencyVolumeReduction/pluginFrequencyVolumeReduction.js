@@ -1,5 +1,5 @@
 /*
-	Frequency Volume Reduction v1.01 by AAD
+	Frequency Volume Reduction v1.0.1 by AAD
 	https://github.com/AmateurAudioDude/FM-DX-Webserver-Plugin-Frequency-Volume-Reduction
 */
 
@@ -33,10 +33,14 @@ function checkAndUpdateVolume() {
 
 // Reduce volume
 function reduceVolume(reductionValue) {
-    Stream.Volume = valueStreamVolume / reductionValue;
+    if (typeof pluginSignalMeterSmallSquelchActive !== 'undefined') {
+        if (!pluginSignalMeterSmallSquelchActive) {
+            Stream.Volume = valueStreamVolume / reductionValue;
 
-    // Display tempMessage and restart the timer
-    displayMessage();
+            // Display tempMessage and restart the timer
+            displayMessage();
+        }
+    }
 }
 
 let tempMessage = '🔉';
@@ -78,7 +82,11 @@ function displayMessage() {
 
 // Restore volume
 function restoreVolume() {
-    Stream.Volume = valueStreamVolume;
+    if (typeof pluginSignalMeterSmallSquelchActive !== 'undefined') {
+        if (!pluginSignalMeterSmallSquelchActive) {
+            Stream.Volume = valueStreamVolume;
+        }
+    }
     if (timer) {
         clearTimeout(timer);
         timer = setTimeout(() => {
