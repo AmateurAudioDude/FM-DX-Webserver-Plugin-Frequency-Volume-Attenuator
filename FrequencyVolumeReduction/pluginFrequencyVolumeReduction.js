@@ -120,6 +120,8 @@ observer.observe(targetNode, config);
 
 // Tooltip
 function initFreqVolTooltips() {
+    $('.tooltip-freq-vol').off('mouseenter mouseleave mousemove'); // Remove previous event handlers
+    $('.tooltiptext').remove(); // Remove any existing tooltips
     $('.tooltip-freq-vol').hover(function(e){
         if (!messageDisplayed) { return; } // Exit if message is not currently displayed
         var tooltipText = $(this).data('tooltip');
