@@ -8,6 +8,9 @@ const valueFrequency = [99.1, 103.9];
 
 // Set initial stream volume
 streamVolume = 1;
+// Global variables for other plugins
+pluginFrequencyVolumeReduction = true;
+pluginFrequencyVolumeReductionActive = false;
 
 // updateVolume also exists in /js/3las/main.js
 function updateVolume() {
@@ -25,7 +28,7 @@ function checkAndUpdateVolume() {
 
     // Check if data-frequency matches any value in valueFrequency array
     if (valueFrequency.some(freq => dataFrequency >= (freq - 0.195) && dataFrequency <= (freq + 0.195))) {
-        reduceVolume(2.25);
+        reduceVolume(2);
     } else if (dataFrequency) {
 		restoreVolume();
     }
@@ -33,13 +36,11 @@ function checkAndUpdateVolume() {
 
 // Reduce volume
 function reduceVolume(reductionValue) {
-    if (typeof pluginSignalMeterSmallSquelchActive !== 'undefined') {
-        if (!pluginSignalMeterSmallSquelchActive) {
-            Stream.Volume = valueStreamVolume / reductionValue;
-
-            // Display tempMessage and restart the timer
-            displayMessage();
-        }
+    if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
+        Stream.Volume = valueStreamVolume / reductionValue;
+        // Display tempMessage and restart the timer
+        displayMessage();
+        pluginFrequencyVolumeReductionActive = true;
     }
 }
 
@@ -61,8 +62,10 @@ function displayMessage() {
             lastBrElement.remove();
         }
         // Add tooltip
-        tunerDesc.classList.add("tooltip");
-        tunerDesc.setAttribute("title", "Volume attenuated for this frequency.");
+        tunerDesc.classList.add("tooltip-freq-vol");
+        tunerDesc.setAttribute("data-tooltip", "Volume attenuated for this frequency.");
+        tunerDesc.style.cursor = 'pointer';
+        initFreqVolTooltips();
     }
 
     // If there's a running timer, clear it and restart
@@ -75,26 +78,27 @@ function displayMessage() {
         e.innerHTML = e.innerHTML.replace(tempMessage, '');
         messageDisplayed = false;
         // Remove tooltip
-        tunerDesc.classList.remove("tooltip");
-        tunerDesc.removeAttribute("title");
+        tunerDesc.classList.remove("tooltip-freq-vol");
+        tunerDesc.removeAttribute("data-tooltip");
+        tunerDesc.style.cursor = 'auto';
     }, 300000);
 }
 
 // Restore volume
 function restoreVolume() {
-    if (typeof pluginSignalMeterSmallSquelchActive !== 'undefined') {
-        if (!pluginSignalMeterSmallSquelchActive) {
-            Stream.Volume = valueStreamVolume;
-        }
+    if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
+        Stream.Volume = valueStreamVolume;
     }
     if (timer) {
         clearTimeout(timer);
         timer = setTimeout(() => {
             e.innerHTML = e.innerHTML.replace(tempMessage, '');
             messageDisplayed = false;
+            pluginFrequencyVolumeReductionActive = false;
             // Remove tooltip
             tunerDesc.classList.remove("tooltip");
             tunerDesc.removeAttribute("title");
+            tunerDesc.style.cursor = 'auto';
         }, 500);
     }
 }
@@ -113,3 +117,36 @@ const config = { childList: true, subtree: true };
 
 // Start observing the target node for changes in its content
 observer.observe(targetNode, config);
+
+// Tooltip
+function initFreqVolTooltips() {
+    $('.tooltip-freq-vol').hover(function(e){
+        if (!messageDisplayed) { return; } // Exit if message is not currently displayed
+        var tooltipText = $(this).data('tooltip');
+        // Add a delay of 500 milliseconds before creating and appending the tooltip
+        $(this).data('timeout', setTimeout(() => {
+            var tooltip = $('<div class="tooltiptext"></div>').html(tooltipText);
+            $('body').append(tooltip);
+
+            var posX = e.pageX;
+            var posY = e.pageY;
+
+            var tooltipWidth = tooltip.outerWidth();
+            var tooltipHeight = tooltip.outerHeight();
+            posX -= tooltipWidth / 2;
+            posY -= tooltipHeight + 10;
+            tooltip.css({ top: posY, left: posX, opacity: .98 }); // Set opacity to 1
+        }, 500));
+    }, function() {
+        // Clear the timeout if the mouse leaves before the delay completes
+        clearTimeout($(this).data('timeout'));
+        $('.tooltiptext').remove();
+    }).mousemove(function(e){
+        var tooltipWidth = $('.tooltiptext').outerWidth();
+        var tooltipHeight = $('.tooltiptext').outerHeight();
+        var posX = e.pageX - tooltipWidth / 2;
+        var posY = e.pageY - tooltipHeight - 10;
+
+        $('.tooltiptext').css({ top: posY, left: posX });
+    });
+}
