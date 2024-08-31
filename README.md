@@ -11,7 +11,14 @@ If any radio stations are above the desired audio levels, this plugin will reduc
 
 Edit **valueFrequency** with the frequencies in which you want the audio reduced.
 
+v1.0.2
+------
+* Minor fixes
 
-v1.0
-----
+v1.0.1
+------
+* Minor fixes
+
+v1.0.0
+------
 * Public release
