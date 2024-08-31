@@ -1,22 +1,16 @@
 /*
-	Frequency Volume Reduction v1.0.1 by AAD
+	Frequency Volume Reduction v1.0.2 by AAD
 	https://github.com/AmateurAudioDude/FM-DX-Webserver-Plugin-Frequency-Volume-Reduction
 */
 
 // Frequency data
-const valueFrequency = [99.1, 103.9];
+const valueFrequency = [95.9, 107.9];
 
 // Set initial stream volume
 streamVolume = 1;
 // Global variables for other plugins
 pluginFrequencyVolumeReduction = true;
 pluginFrequencyVolumeReductionActive = false;
-
-// updateVolume also exists in /js/3las/main.js
-function updateVolume() {
-	streamVolume = $(this).val();
-	setTimeout(() => Stream.Volume = $(this).val(), 100);
-}
 
 // Check and update Stream.Volume
 function checkAndUpdateVolume() {
@@ -37,7 +31,7 @@ function checkAndUpdateVolume() {
 // Reduce volume
 function reduceVolume(reductionValue) {
     if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
-        Stream.Volume = valueStreamVolume / reductionValue;
+        if (Stream) { Stream.Volume = valueStreamVolume / reductionValue; }
         // Display tempMessage and restart the timer
         displayMessage();
         pluginFrequencyVolumeReductionActive = true;
@@ -47,7 +41,7 @@ function reduceVolume(reductionValue) {
 let tempMessage = '🔉';
 let e = document.getElementById("tuner-name");
 let messageDisplayed = false;
-let timer;
+let timerVolumeReduction;
 
 // Display tempMessage and start/reset the timer
 function displayMessage() {
@@ -69,12 +63,12 @@ function displayMessage() {
     }
 
     // If there's a running timer, clear it and restart
-    if (timer) {
-        clearTimeout(timer);
+    if (timerVolumeReduction) {
+        clearTimeout(timerVolumeReduction);
     }
 
     // Start the timer to remove tempMessage
-    timer = setTimeout(() => {
+    timerVolumeReduction = setTimeout(() => {
         e.innerHTML = e.innerHTML.replace(tempMessage, '');
         messageDisplayed = false;
         // Remove tooltip
@@ -87,11 +81,11 @@ function displayMessage() {
 // Restore volume
 function restoreVolume() {
     if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
-        Stream.Volume = valueStreamVolume;
+        if (Stream) { Stream.Volume = valueStreamVolume; }
     }
-    if (timer) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+    if (timerVolumeReduction) {
+        clearTimeout(timerVolumeReduction);
+        timerVolumeReduction = setTimeout(() => {
             e.innerHTML = e.innerHTML.replace(tempMessage, '');
             messageDisplayed = false;
             pluginFrequencyVolumeReductionActive = false;
@@ -137,7 +131,12 @@ function initFreqVolTooltips() {
             var tooltipHeight = tooltip.outerHeight();
             posX -= tooltipWidth / 2;
             posY -= tooltipHeight + 10;
-            tooltip.css({ top: posY, left: posX, opacity: .98 }); // Set opacity to 1
+            tooltip.css({ top: posY, left: posX, opacity: .99 }); // Set opacity to 1
+            // For touchscreen devices
+            if ((/Mobi|Android|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent)) && ('ontouchstart' in window || navigator.maxTouchPoints)) {
+                setTimeout(() => { $('.tooltiptext').remove(); }, 10000);
+                document.addEventListener('touchstart', function() { setTimeout(() => { $('.tooltiptext').remove(); }, 500); });
+            }
         }, 500));
     }, function() {
         // Clear the timeout if the mouse leaves before the delay completes
