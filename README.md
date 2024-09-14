@@ -1,6 +1,6 @@
 # Frequency Volume Reduction plugin for FM-DX-Webserver
 
-If any radio stations are above the desired audio levels, this plugin will reduce the volume of those frequencies.
+This plugin will reduce the volume of any selected frequencies. Useful if any radio stations are above the desired audio levels or if certain frequencies are noisy.
 
 * [Download the latest zip file](https://github.com/AmateurAudioDude/FM-DX-Webserver-Plugin-Frequency-Volume-Reduction/archive/refs/heads/main.zip)
 * Transfer `FrequencyVolumeReduction` folder, and `FrequencyVolumeReduction.js` to FM-DX-Webserver `plugins` folder
@@ -10,6 +10,8 @@ If any radio stations are above the desired audio levels, this plugin will reduc
 ## Options
 
 Edit **valueFrequency** with the frequencies in which you want the audio reduced.
+
+## Changelog
 
 v1.0.2
 ------
