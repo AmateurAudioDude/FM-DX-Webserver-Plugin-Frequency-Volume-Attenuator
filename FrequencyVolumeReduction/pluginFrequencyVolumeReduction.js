@@ -1,9 +1,11 @@
 /*
-	Frequency Volume Reduction v1.0.2 by AAD
+	Frequency Volume Reduction v1.0.3 by AAD
 	https://github.com/AmateurAudioDude/FM-DX-Webserver-Plugin-Frequency-Volume-Reduction
 */
 
-// Frequency data
+(() => {
+
+// Frequency data, set your custom frequencies here
 const valueFrequency = [95.9, 107.9];
 
 // Set initial stream volume
@@ -18,7 +20,7 @@ function checkAndUpdateVolume() {
     const dataFrequencySpan = document.getElementById("freq-container").querySelector("#data-frequency");
     const dataFrequency = parseFloat(dataFrequencySpan.textContent.trim());
 
-	valueStreamVolume = streamVolume || 1;
+    valueStreamVolume = streamVolume || 1;
 
     // Check if data-frequency matches any value in valueFrequency array
     if (valueFrequency.some(freq => dataFrequency >= (freq - 0.195) && dataFrequency <= (freq + 0.195))) {
@@ -31,7 +33,7 @@ function checkAndUpdateVolume() {
 // Reduce volume
 function reduceVolume(reductionValue) {
     if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
-        if (Stream) { Stream.Volume = valueStreamVolume / reductionValue; }
+        if (Stream) Stream.Volume = valueStreamVolume / reductionValue;
         // Display tempMessage and restart the timer
         displayMessage();
         pluginFrequencyVolumeReductionActive = true;
@@ -81,7 +83,9 @@ function displayMessage() {
 // Restore volume
 function restoreVolume() {
     if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
-        if (Stream) { Stream.Volume = valueStreamVolume; }
+        setTimeout(() => {
+            if (Stream) Stream.Volume = valueStreamVolume;
+        }, 800);
     }
     if (timerVolumeReduction) {
         clearTimeout(timerVolumeReduction);
@@ -151,3 +155,5 @@ function initFreqVolTooltips() {
         $('.tooltiptext').css({ top: posY, left: posX });
     });
 }
+
+})();
