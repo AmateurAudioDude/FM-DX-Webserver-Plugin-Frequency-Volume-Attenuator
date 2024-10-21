@@ -13,6 +13,10 @@ Edit **valueFrequency** with the frequencies in which you want the audio reduced
 
 ## Changelog
 
+v1.0.3
+------
+* Added slight delay before restoring volume
+
 v1.0.2
 ------
 * Minor fixes
