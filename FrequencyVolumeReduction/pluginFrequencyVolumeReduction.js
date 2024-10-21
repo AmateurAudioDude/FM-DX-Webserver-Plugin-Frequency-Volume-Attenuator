@@ -90,12 +90,12 @@ function restoreVolume() {
             e.innerHTML = e.innerHTML.replace(tempMessage, '');
             messageDisplayed = false;
             pluginFrequencyVolumeReductionActive = false;
+            if ((typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) && Stream) Stream.Volume = valueStreamVolume;
             // Remove tooltip
             tunerDesc.classList.remove("tooltip");
             tunerDesc.removeAttribute("title");
             tunerDesc.style.cursor = 'auto';
-            if ((typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) && Stream) Stream.Volume = valueStreamVolume;
-        }, 600);
+        }, 750);
     }
 }
 
