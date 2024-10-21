@@ -13,6 +13,11 @@ Edit **valueFrequency** with the frequencies in which you want the audio reduced
 
 ## Changelog
 
+v1.0.4
+------
+* Added bandwidth option to control attenuation of side frequencies
+* Fixed volume being reset on frequency change
+
 v1.0.3
 ------
 * Added slight delay before restoring volume
