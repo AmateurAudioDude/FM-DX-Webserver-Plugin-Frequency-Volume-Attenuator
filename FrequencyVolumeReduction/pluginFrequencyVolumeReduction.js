@@ -1,5 +1,5 @@
 /*
-	Frequency Volume Reduction v1.0.3 by AAD
+	Frequency Volume Reduction v1.0.4 by AAD
 	https://github.com/AmateurAudioDude/FM-DX-Webserver-Plugin-Frequency-Volume-Reduction
 */
 
@@ -7,26 +7,28 @@
 
 // Frequency data, set your custom frequencies here
 const valueFrequency = [95.9, 107.9];
+const valueBandwidth = 290; // kHz. 100 = no attenuation for side frequencies. Default: 290
 
 // Set initial stream volume
-streamVolume = 1;
+streamVolume = newVolumeGlobal || 1;
 // Global variables for other plugins
 pluginFrequencyVolumeReduction = true;
 pluginFrequencyVolumeReductionActive = false;
 
+const freqBandwidth = ((valueBandwidth / 1000) - 0.095);
 // Check and update Stream.Volume
 function checkAndUpdateVolume() {
     // Get the value of the span element with ID "data-frequency"
     const dataFrequencySpan = document.getElementById("freq-container").querySelector("#data-frequency");
     const dataFrequency = parseFloat(dataFrequencySpan.textContent.trim());
 
-    valueStreamVolume = streamVolume || 1;
+    valueStreamVolume = newVolumeGlobal || 1;
 
     // Check if data-frequency matches any value in valueFrequency array
-    if (valueFrequency.some(freq => dataFrequency >= (freq - 0.195) && dataFrequency <= (freq + 0.195))) {
+    if (valueFrequency.some(freq => dataFrequency >= (freq - freqBandwidth) && dataFrequency <= (freq + freqBandwidth))) {
         reduceVolume(2);
     } else if (dataFrequency) {
-		restoreVolume();
+        restoreVolume();
     }
 }
 
@@ -82,11 +84,6 @@ function displayMessage() {
 
 // Restore volume
 function restoreVolume() {
-    if (typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) {
-        setTimeout(() => {
-            if (Stream) Stream.Volume = valueStreamVolume;
-        }, 800);
-    }
     if (timerVolumeReduction) {
         clearTimeout(timerVolumeReduction);
         timerVolumeReduction = setTimeout(() => {
@@ -97,7 +94,8 @@ function restoreVolume() {
             tunerDesc.classList.remove("tooltip");
             tunerDesc.removeAttribute("title");
             tunerDesc.style.cursor = 'auto';
-        }, 500);
+            if ((typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) && Stream) Stream.Volume = valueStreamVolume;
+        }, 600);
     }
 }
 
