@@ -42,7 +42,8 @@ function reduceVolume(reductionValue) {
     }
 }
 
-let tempMessage = '🔉';
+let tempMessage = '\u{1F50A}';
+let tunerDesc;
 let e = document.getElementById("tuner-name");
 let messageDisplayed = false;
 let timerVolumeReduction;
@@ -92,6 +93,7 @@ function restoreVolume() {
             pluginFrequencyVolumeReductionActive = false;
             if ((typeof pluginSignalMeterSmallSquelchActive == 'undefined' || (typeof pluginSignalMeterSmallSquelchActive !== 'undefined' && !pluginSignalMeterSmallSquelchActive)) && Stream) Stream.Volume = valueStreamVolume;
             // Remove tooltip
+            tunerDesc = document.getElementById('tuner-name');
             tunerDesc.classList.remove("tooltip");
             tunerDesc.removeAttribute("title");
             tunerDesc.style.cursor = 'auto';
