@@ -1,6 +1,6 @@
 // Plugin configuration, this is used in the administration when plugins are loaded
 var pluginConfig = {
-    name: 'Frequency Volume Reduction',
+    name: 'Frequency Volume Attenuator',
     version: '1.0.4',
     author: 'AAD',
     frontEndPath: 'FrequencyVolumeReduction/pluginFrequencyVolumeReduction.js'
