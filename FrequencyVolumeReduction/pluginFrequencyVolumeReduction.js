@@ -8,6 +8,7 @@
 // Frequency data, set your custom frequencies here
 const valueFrequency = [95.9, 107.9];
 const valueBandwidth = 290; // kHz. 100 = no attenuation for side frequencies. Default: 290
+const showSpeakerIcon = true;
 
 const pluginVersion = '1.0.4';
 const pluginName = "Frequency Volume Attenuator";
@@ -60,7 +61,7 @@ let timerVolumeReduction;
 function displayMessage() {
     // Check if the message is not already displayed
     if (!messageDisplayed && window.innerWidth >= 768) {
-        e.innerHTML += tempMessage;
+        if (showSpeakerIcon) e.innerHTML += tempMessage;
         messageDisplayed = true;
         // Remove the last <br> from the element with the ID tuner-desc
         tunerDesc = document.getElementById('tuner-name');
